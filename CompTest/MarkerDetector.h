@@ -18,14 +18,31 @@ class MarkerDetector
 {
 public:
     MarkerDetector();
-    void preprocessImage(Mat& image);
-    vector<Mat> findPossibleMarkers(Mat& image);
+    MarkerDetector(int len, int str, int hei);
+    ~MarkerDetector();
+    int Length() const;
+    int Stride() const;
+    int Height() const;
+    void setLength(int const value);
+    void setStride(int const value);
+    void setHeight(int const value);
+    void preprocessImage(Mat* image);
+    void findPossibleMarkers();
+    //IplImage *CurrentFrame();
+    Mat CurrentFrame() const;
+    Mat PreprocessedFrame() const;
+    void setCurrentFrame(Mat const value);
 private:
+    int height;
+    Mat currentFrame;
+    Mat preprocessedFrame;
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
     int variances[4];
     int _max,length,stride,labres,tresh = 10;
     int i,z = 0;
     uchar* ptr,* ptr_2;
-    void differenceEdgeDetectorWithThresh(Mat& image);
+    void differenceEdgeDetectionWithThresh(Mat* from);
     void init();
 };
 

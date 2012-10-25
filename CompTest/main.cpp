@@ -15,8 +15,11 @@
 #include <objdetect.hpp>
 #include <iostream>
 
+#include "MarkerDetector.h"
+
 using namespace cv;
 
+/*
 int variances[4];
 int _max,length,stride,labres,tresh = 10;
 int i,z = 0;
@@ -45,6 +48,8 @@ void differenceEdgeDetectionWithThresh(IplImage *frame, IplImage *frame_new)
         ptr_2[i] = (variances[_max] > tresh)?255:0;
     }
 }
+ 
+ */
 
 int main(int argc, const char * argv[])
 {
@@ -57,7 +62,7 @@ int main(int argc, const char * argv[])
     // Create a window in which the captured images will be presented
     cvNamedWindow( "CameraView", CV_WINDOW_AUTOSIZE );
     cvNamedWindow( "CameraViewEdgeDetected", CV_WINDOW_AUTOSIZE );
-    
+        
     // Fukin blob staff
     
     /*
@@ -84,38 +89,54 @@ int main(int argc, const char * argv[])
     blobDetector.create("SimpleBlob");
      */
     
-    // Show the image captured from the camera in the window and repeat
+    
+    IplImage* frame = cvQueryFrame( capture );
+    CvSize frameSize = cvGetSize(frame);
+    
+    MarkerDetector* markerDetector;
+    
+    if ( !frame ) {
+        cvReleaseCapture( &capture );
+        cvDestroyAllWindows();
+        std::cout << "Camera is unavailable...\n";
+        return 0;
+    }
+    else
+    {
+        /*markerDetector->setLength((frame->width - 1 )*(frame->height - 1));
+        markerDetector->setStride(frame->width);
+        markerDetector->setHeight(frame->height);*/
+        
+        markerDetector = new MarkerDetector((frame->width - 1 )*(frame->height - 1),frame->width,frame->height);
+
+    }
+    
+    IplImage* frame_gray = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
+    
     while ( 1 ) {
-        // Get one frame
+                
         IplImage* frame = cvQueryFrame( capture );
-        CvSize frameSize = cvGetSize(frame);
-        if ( !frame ) {
-            fprintf( stderr, "ERROR: frame is null...\n" );
-            getchar();
-            break;
-        }
-        
-        
-        
-        length = (frame->width - 1 )*(frame->height - 1);
-        stride = frame->width;
-        
-        vector<vector<Point> > contours;
-        vector<Vec4i> hierarchy;
-        
-        IplImage *frame_gray = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
-        IplImage *frame_binary = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
-        
-        Mat dst = Mat::zeros(frame->height, frame->width, CV_8UC3);
-        Mat src = Mat(frame_binary);
-        src = src < 255;
-        
-        //IplImage *frame_label = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
         
         cvCvtColor(frame,frame_gray,CV_RGB2GRAY);
         
-        differenceEdgeDetectionWithThresh( frame_gray , frame_binary );
+        //IplImage *frame_gray = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
+        //IplImage *frame_binary = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
         
+       /* Mat dst = Mat::zeros(frame->height, frame->width, CV_8UC3);
+        Mat src = Mat::zeros(frame->height, frame->width, CV_8UC3);
+        src = src < 255;*/
+        
+        //IplImage *frame_label = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
+        
+        //Mat currentMat = new Mat(frame_gray);
+        
+        markerDetector->setCurrentFrame(Mat(frame));
+        
+        markerDetector->preprocessImage(new Mat(frame_gray));
+        
+        markerDetector->findPossibleMarkers();
+        
+        /*
         findContours( src, contours, hierarchy,CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
         
         vector<Point> approxCurve;
@@ -134,6 +155,8 @@ int main(int argc, const char * argv[])
                 }
             }
         }
+         
+         */
         
         
         /*blobDetector.detect( frame_binary, keyPoints );
@@ -146,24 +169,26 @@ int main(int argc, const char * argv[])
         }*/
         //drawKeypoints( frame, keyPoints, frame_binary, Scalar::all(-1), DrawMatchesFlags::DEFAULT );
         
-        cvShowImage( "CameraView", frame );
-        imshow( "CameraViewEdgeDetected", dst );
         
-        cvReleaseImage(&frame_gray);
-       // cvReleaseImage(&frame_label);
-        cvReleaseImage(&frame_binary);
+        //cvShowImage( "CameraView", frame );
+        //cvShowImage( "CameraViewEdgeDetected",  );
+        imshow( "CameraView", markerDetector->CurrentFrame() );
+        imshow( "CameraViewEdgeDetected", markerDetector->PreprocessedFrame() );
         
+        //cvReleaseImage(&frame_gray);
+
         //cvShowImage( "CameraView", frame_gray );
         
         // Do not release the frame!
         //If ESC key pressed, Key=0x10001B under OpenCV 0.9.7(linux version),
         //remove higher bits using AND operator
+        
         if ( (cvWaitKey(10) & 255) == 27 ) break;
     }
     // Release the capture device housekeeping
     cvReleaseCapture( &capture );
     cvDestroyWindow( "CameraView" );
-    std::cout << "Maybe running...\n";
+    std::cout << "Bye\n";
     return 0;
 }
 
