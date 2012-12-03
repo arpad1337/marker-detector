@@ -12,6 +12,7 @@
 		BA41C48616359C5B000D6FE7 /* libopencv_objdetect.2.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BA41C48416359C5B000D6FE7 /* libopencv_objdetect.2.4.2.dylib */; };
 		BADAA76C163465420030E7B9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADAA76B163465420030E7B9 /* main.cpp */; };
 		BADAA76E163465420030E7B9 /* CompTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADAA76D163465420030E7B9 /* CompTest.1 */; };
+		BAE51FF01666796E00A54F21 /* libopencv_calib3d.2.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BAE51FEF1666796E00A54F21 /* libopencv_calib3d.2.4.2.dylib */; };
 		BAE55722163863F700DD4C75 /* MarkerDetector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE55720163863F700DD4C75 /* MarkerDetector.cpp */; };
 		BAF1BBE416347E69007C0E0C /* libopencv_highgui.2.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF1BBE116347E69007C0E0C /* libopencv_highgui.2.4.2.dylib */; };
 		BAF1BBE516347E69007C0E0C /* libopencv_imgproc.2.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF1BBE216347E69007C0E0C /* libopencv_imgproc.2.4.2.dylib */; };
@@ -36,6 +37,7 @@
 		BADAA767163465420030E7B9 /* CompTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CompTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BADAA76B163465420030E7B9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		BADAA76D163465420030E7B9 /* CompTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = CompTest.1; sourceTree = "<group>"; };
+		BAE51FEF1666796E00A54F21 /* libopencv_calib3d.2.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_calib3d.2.4.2.dylib; path = ../../../../../../usr/local/Cellar/opencv/2.4.2/lib/libopencv_calib3d.2.4.2.dylib; sourceTree = "<group>"; };
 		BAE55720163863F700DD4C75 /* MarkerDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkerDetector.cpp; sourceTree = "<group>"; };
 		BAE55721163863F700DD4C75 /* MarkerDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkerDetector.h; sourceTree = "<group>"; };
 		BAF1BBE016347E69007C0E0C /* libopencv_core.2.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.2.dylib; path = ../../../../../../usr/local/Cellar/opencv/2.4.2/lib/libopencv_core.2.4.2.dylib; sourceTree = "<group>"; };
@@ -48,6 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAE51FF01666796E00A54F21 /* libopencv_calib3d.2.4.2.dylib in Frameworks */,
 				BA41C48516359C5B000D6FE7 /* libopencv_features2d.2.4.2.dylib in Frameworks */,
 				BA41C48616359C5B000D6FE7 /* libopencv_objdetect.2.4.2.dylib in Frameworks */,
 				BA41C47D16359968000D6FE7 /* libopencv_core.2.4.2.dylib in Frameworks */,
@@ -62,6 +65,7 @@
 		BADAA75C163465420030E7B9 = {
 			isa = PBXGroup;
 			children = (
+				BAE51FEF1666796E00A54F21 /* libopencv_calib3d.2.4.2.dylib */,
 				BA41C48316359C5B000D6FE7 /* libopencv_features2d.2.4.2.dylib */,
 				BA41C48416359C5B000D6FE7 /* libopencv_objdetect.2.4.2.dylib */,
 				BAF1BBE016347E69007C0E0C /* libopencv_core.2.4.2.dylib */,

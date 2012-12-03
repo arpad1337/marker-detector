@@ -26,23 +26,29 @@ public:
     void setLength(int const value);
     void setStride(int const value);
     void setHeight(int const value);
-    void preprocessImage(Mat* image);
+    void preprocessImage();
     void findPossibleMarkers();
     //IplImage *CurrentFrame();
     Mat CurrentFrame() const;
+    Mat CurrentFrameGray() const;
     Mat PreprocessedFrame() const;
+    Mat SegmentsFrame() const;
     void setCurrentFrame(Mat const value);
+    Mat currentMarker;
 private:
     int height;
     Mat currentFrame;
+    Mat currentFrameGray;
     Mat preprocessedFrame;
+    Mat segmentsFrame;
+    Mat warpMatrix;
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
     int variances[4];
-    int _max,length,stride,labres,tresh = 10;
+    int _max,length,stride,labres,tresh = 20;
     int i,z = 0;
     uchar* ptr,* ptr_2;
-    void differenceEdgeDetectionWithThresh(Mat* from);
+    void differenceEdgeDetectionWithThresh(Mat grayFrame);
     void init();
 };
 

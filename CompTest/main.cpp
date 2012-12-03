@@ -61,8 +61,13 @@ int main(int argc, const char * argv[])
     }
     // Create a window in which the captured images will be presented
     cvNamedWindow( "CameraView", CV_WINDOW_AUTOSIZE );
+    cvNamedWindow( "CameraViewGrayscale", CV_WINDOW_AUTOSIZE );
     cvNamedWindow( "CameraViewEdgeDetected", CV_WINDOW_AUTOSIZE );
-        
+    cvNamedWindow( "CameraViewSegments", CV_WINDOW_AUTOSIZE );
+    cvNamedWindow( "burgonya", CV_WINDOW_AUTOSIZE );
+
+    
+    
     // Fukin blob staff
     
     /*
@@ -91,7 +96,6 @@ int main(int argc, const char * argv[])
     
     
     IplImage* frame = cvQueryFrame( capture );
-    CvSize frameSize = cvGetSize(frame);
     
     MarkerDetector* markerDetector;
     
@@ -111,13 +115,11 @@ int main(int argc, const char * argv[])
 
     }
     
-    IplImage* frame_gray = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
+    //IplImage* frame_gray = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
     
     while ( 1 ) {
                 
         IplImage* frame = cvQueryFrame( capture );
-        
-        cvCvtColor(frame,frame_gray,CV_RGB2GRAY);
         
         //IplImage *frame_gray = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
         //IplImage *frame_binary = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
@@ -132,7 +134,9 @@ int main(int argc, const char * argv[])
         
         markerDetector->setCurrentFrame(Mat(frame));
         
-        markerDetector->preprocessImage(new Mat(frame_gray));
+       // cvShowImage( "CameraViewGrayscale", frame_gray );
+        
+        markerDetector->preprocessImage();
         
         markerDetector->findPossibleMarkers();
         
@@ -174,6 +178,11 @@ int main(int argc, const char * argv[])
         //cvShowImage( "CameraViewEdgeDetected",  );
         imshow( "CameraView", markerDetector->CurrentFrame() );
         imshow( "CameraViewEdgeDetected", markerDetector->PreprocessedFrame() );
+        imshow( "CameraViewSegments", markerDetector->SegmentsFrame() );
+        if(markerDetector->currentMarker.rows > 0 && markerDetector->currentMarker.cols > 0)
+        {
+            imshow( "burgonya",markerDetector->currentMarker );
+        }
         
         //cvReleaseImage(&frame_gray);
 
