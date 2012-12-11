@@ -11,6 +11,7 @@
 
 #include "cv.h"
 #include <iostream>
+#include "Marker.h"
 
 using namespace cv;
 
@@ -27,28 +28,29 @@ public:
     void setStride(int const value);
     void setHeight(int const value);
     void preprocessImage();
-    void findPossibleMarkers();
+    vector<Marker> findPossibleMarkers();
     //IplImage *CurrentFrame();
     Mat CurrentFrame() const;
     Mat CurrentFrameGray() const;
     Mat PreprocessedFrame() const;
     Mat SegmentsFrame() const;
-    void setCurrentFrame(Mat const value);
-    Mat currentMarker;
+    void setCurrentFrame(Mat value);
 private:
     int height;
     Mat currentFrame;
     Mat currentFrameGray;
     Mat preprocessedFrame;
     Mat segmentsFrame;
-    Mat warpMatrix;
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
     int variances[4];
-    int _max,length,stride,labres,tresh = 20;
+    int _max,length,stride,labres,tresh = 10;
     int i,z = 0;
     uchar* ptr,* ptr_2;
     void differenceEdgeDetectionWithThresh(Mat grayFrame);
+    double extractDataFromBinaryMarker(Mat possibleMarker, bool binaryCode[6][6]);
+    long hashBinaryMatrix(bool binaryCode[6][6]);
+    bool validateBinaryMatrix(bool binaryCode[6][6]);
     void init();
 };
 

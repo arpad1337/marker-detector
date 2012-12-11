@@ -24,9 +24,9 @@ MarkerDetector::MarkerDetector(int len, int str, int hei)
 void MarkerDetector::preprocessImage()
 {
     preprocessedFrame.release();
-    preprocessedFrame = Mat::zeros(height, stride, CV_8UC1);
-    cvtColor(currentFrame,currentFrameGray,CV_RGB2GRAY);
-    differenceEdgeDetectionWithThresh(currentFrameGray);
+    preprocessedFrame = Mat(Mat::zeros(height, stride, CV_8UC1));
+    //cvtColor(currentFrame,currentFrameGray,CV_RGB2GRAY);
+    differenceEdgeDetectionWithThresh(currentFrame);
 }
 
 void MarkerDetector::differenceEdgeDetectionWithThresh(Mat from)
@@ -54,10 +54,12 @@ void MarkerDetector::differenceEdgeDetectionWithThresh(Mat from)
     }
 }
 
-void MarkerDetector::findPossibleMarkers()
+vector<Marker> MarkerDetector::findPossibleMarkers()
 {
     segmentsFrame.release();
     segmentsFrame = Mat::zeros(height, stride, CV_8UC3);
+    
+    vector<Marker> realMarkers;
     
     findContours( preprocessedFrame, contours, hierarchy,CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
     
@@ -88,59 +90,78 @@ void MarkerDetector::findPossibleMarkers()
                 p[3].x= approxCurve[3].x;
                 p[3].y= approxCurve[3].y;
                 
-                // távolságok vizsgálata
-                
-                if( (abs(approxCurve[0].x-approxCurve[1].x) + abs(approxCurve[0].y-approxCurve[1].y)) > 50 &&
-                    (abs(approxCurve[1].x-approxCurve[2].x) + abs(approxCurve[1].y-approxCurve[2].y)) > 50 &&
-                    (abs(approxCurve[2].x-approxCurve[3].x) + abs(approxCurve[2].y-approxCurve[3].y)) > 50 &&
-                    (abs(approxCurve[3].x-approxCurve[4].x) + abs(approxCurve[3].y-approxCurve[4].y)) > 50
+                // távolságok vizsgálata, túl közeli objektumok kiszűrése
+                if( sqrt((approxCurve[0].x-approxCurve[1].x)*(approxCurve[0].x-approxCurve[1].x)
+                          + (approxCurve[0].y-approxCurve[1].y)*(approxCurve[0].y-approxCurve[1].y)) > 50 &&
+                     sqrt((approxCurve[1].x-approxCurve[2].x)*(approxCurve[1].x-approxCurve[2].x)
+                          + (approxCurve[1].y-approxCurve[2].y)*(approxCurve[1].y-approxCurve[2].y)) > 50 &&
+                     sqrt((approxCurve[2].x-approxCurve[3].x)*(approxCurve[2].x-approxCurve[3].x)
+                          + (approxCurve[2].y-approxCurve[3].y)*(approxCurve[2].y-approxCurve[3].y)) > 50 &&
+                     sqrt((approxCurve[3].x-approxCurve[0].x)*(approxCurve[3].x-approxCurve[0].x)
+                          + (approxCurve[3].y-approxCurve[0].y)*(approxCurve[3].y-approxCurve[0].y)) > 50
                     )
                 {
                 
-                q[0].x= (float) 0;
-                q[0].y= (float) 0;
-                q[1].x= (float)300;//(float) stride-1;
-                q[1].y= (float) 0;
+                    q[0].x= (float) 0;
+                    q[0].y= (float) 0;
+                    q[1].x= (float)300;
+                    q[1].y= (float) 0;
                 
-                q[2].x= (float)300;//(float) stride-1;
-                q[2].y= (float)300;//(float) height-1;
-                q[3].x= (float) 0;
-                q[3].y= (float)300;//(float) height-1;
-                
-                //Set of destination points to calculate Perspective matrix
-                p[0].x= approxCurve[0].x;
-                p[0].y= approxCurve[0].y;
-                p[1].x= approxCurve[1].x;
-                p[1].y= approxCurve[1].y;
-                
-                p[2].x= approxCurve[2].x;
-                p[2].y= approxCurve[2].y;
-                p[3].x= approxCurve[3].x;
-                p[3].y= approxCurve[3].y;
-                
-                //Calculate Perspective matrix
-                warpMatrix = getPerspectiveTransform(p,q);
-                
-                //Rect boundRect = boundingRect(approxCurve);
-                
-                //Mat cuttedImage = Mat(currentFrame,boundRect);
-                
-                currentMarker = Mat();
-                Mat temp = Mat();
-                
-                warpPerspective(currentFrameGray, temp, warpMatrix, Size(300,300),INTER_NEAREST);
+                    q[2].x= (float)300;
+                    q[2].y= (float)300;
+                    q[3].x= (float) 0;
+                    q[3].y= (float)300;
                     
-                threshold(temp, currentMarker, 0, 255, THRESH_OTSU);
+                    p[0].x= approxCurve[0].x;
+                    p[0].y= approxCurve[0].y;
+                    p[1].x= approxCurve[1].x;
+                    p[1].y= approxCurve[1].y;
+                
+                    p[2].x= approxCurve[2].x;
+                    p[2].y= approxCurve[2].y;
+                    p[3].x= approxCurve[3].x;
+                    p[3].y= approxCurve[3].y;
+                
+                    //Calculate Perspective matrix
+                    Mat warpMatrix = getPerspectiveTransform(p,q);
                     
+                    //Rect boundRect = boundingRect(approxCurve);
+                    
+                    //Mat cuttedImage = Mat(currentFrame,boundRect);
+                    
+                    Mat currentMarker = Mat();
+                    Mat temp = Mat();
+                
+                    warpPerspective(currentFrame, temp, warpMatrix, Size(300,300),INTER_NEAREST);
+                    
+                    threshold(temp, currentMarker, 0, 255, THRESH_OTSU);
+                    
+                    bool binaryCode[6][6];
+                    
+                    double confidence = extractDataFromBinaryMarker(currentMarker, binaryCode);
+                    
+                    if( confidence < 0.80)
+                    {
+                        std::cout << "Valószínűleg rossz marker" << std::endl;
+                    
+                    }
+                    else
+                    {
+                        if(validateBinaryMatrix(binaryCode))
+                        {
+                            Marker m = Marker(p,hashBinaryMatrix(binaryCode),binaryCode);
+                            realMarkers.push_back(m);
+                            
+                            //std::cout << "Hash: "<< hashBinaryMatrix(binaryCode) << std::endl;
+                        }
+                        else{
+                            std::cout << "Nem valós markert reprezentáló bináris mátrix" << std::endl;
+                        }
+                    }
                     
                     //currentMarker = temp;
                 
-                //currentMarker = cuttedImage;
-                
-                line( currentFrame, p[0], p[1], CV_RGB(255,0,0),2);
-                line( currentFrame, p[1], p[2], CV_RGB(0,255,0),2);
-                line( currentFrame, p[2], p[3], CV_RGB(0,0,255),2);
-                line( currentFrame, p[3], p[0], CV_RGB(255,255,0),2);
+                    //currentMarker = cuttedImage;
                 
                 }
                 
@@ -148,6 +169,122 @@ void MarkerDetector::findPossibleMarkers()
             }
         }
     }
+    
+    return realMarkers;
+}
+
+double MarkerDetector::extractDataFromBinaryMarker(Mat possibleMarker,bool binaryCode[6][6])
+{
+    Mat currentBlock = Mat(40,40,CV_8UC1);
+    double confidence = 1600;
+    double blockConfidence,whitePixels;
+    std::cout << "Marker start: " << std::endl;
+    for( int i = 0; i < 6; i++ )
+    {
+        for( int j = 0; j < 6; j++ )
+        {
+            // 50x50 méretű blokkok 5-5 pixel ráhagyással
+            
+            currentBlock = Mat(possibleMarker,Rect((i*50 + 5), (j*50 + 5),40,40));
+            
+            whitePixels = (sum(currentBlock)[0] / 255);
+            
+            binaryCode[i][j] = (whitePixels > 800);
+            
+            blockConfidence = (binaryCode[i][j])?whitePixels:1600-whitePixels;
+            
+            std::cout << binaryCode[i][j] << " | ";
+            
+            if(blockConfidence < confidence){
+                confidence = blockConfidence;
+            }
+        }
+        std::cout << std::endl;
+    }
+    confidence = confidence / 1600;
+    std::cout << "Konfidencia szint: " << confidence << std::endl;
+    return confidence;
+    
+}
+
+bool MarkerDetector::validateBinaryMatrix(bool binaryCode[6][6])
+{
+    bool hasValue = false;
+    bool blackBorder = false;
+    for( int i = 0; i < 6; i++ )
+    {
+        blackBorder |= binaryCode[0][i];
+        blackBorder |= binaryCode[i][0];
+        blackBorder |= binaryCode[5][i];
+        blackBorder |= binaryCode[i][5];
+        for(int j = 0;j<6;j++)
+        {
+            hasValue |= binaryCode[i][j];
+        }
+    }
+    return !blackBorder && hasValue;
+}
+
+long MarkerDetector::hashBinaryMatrix(bool binaryCode[6][6])
+{
+    //bool rotate90[4][4],rotate180[4][4],rotate270[4][4];
+    
+    //char const hex_chars[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+    
+   // char bm[4],rotate90[4],rotate180[4],rotate270[4];
+    
+    long hash = 0;
+    
+    string bmc="",r90="",r180="",r270="";
+    for( int i = 1; i < 5; i++ )
+    {
+        for( int j = 1; j < 5; j++ )
+        {
+            bmc += (binaryCode[i][j])?"0":"1";
+            r90 += (binaryCode[j][5-i])?"0":"1";
+            r180 += (binaryCode[5-i][5-j])?"0":"1";
+            r270 += (binaryCode[5-j][i])?"0":"1";
+        }
+        
+        //char const *byte = bmc.c_str();
+        
+        //std::cout << std::hex << bmc << std::endl;
+       // std::cout << hex_chars[ ( bmc.c_str() & 0x0F ) >> 0 ];
+       // bm[i] = bmc[0];
+        //rotate90[i] = r90[0];
+        //rotate180[i] = r180[0];
+        //rotate270[i] = r270[0];
+    }
+    
+    std::cout << bmc << std::endl;
+    std::cout << r90 << std::endl;
+    std::cout << r180 << std::endl;
+    std::cout << r270 << std::endl;
+    
+   // return std::atoi(bm) + std::atoi(rotate90) + std::atoi(rotate180) + std::atoi(rotate270);
+    
+    //hash = Integer.parseInt(
+    
+    //return std::strtol(bmc.c_str(), & ptr, 2) + std::strtol(r90.c_str(), & ptr, 2) + std::strtol(r180.c_str(), & ptr, 2) + std::strtol(r270.c_str(), & ptr, 2);
+    
+    char *ptr;
+    
+    hash ^= std::strtol(bmc.c_str(), & ptr, 2) / 64 - 1;
+
+    *ptr = NULL;
+    
+    hash ^= std::strtol(r90.c_str(), & ptr, 2) / 64 - 1;
+    
+    *ptr = NULL;
+    
+    hash ^= std::strtol(r180.c_str(), & ptr, 2) / 64 - 1;
+    
+    *ptr = NULL;
+    
+    hash ^= std::strtol(r270.c_str(), & ptr, 2) / 64 - 1;
+    
+    return hash;
 }
 
 
@@ -179,7 +316,7 @@ Mat MarkerDetector::SegmentsFrame() const
 void MarkerDetector::setCurrentFrame(Mat value)
 {
     currentFrame.release();
-    currentFrame = Mat(value);
+    currentFrame = value;
 }
 
 //void MarkerDetector::set
@@ -187,6 +324,7 @@ void MarkerDetector::setCurrentFrame(Mat value)
 void MarkerDetector::init()
 {
     Mat warpMatrix = Mat(3,3,CV_32FC1);
+    preprocessedFrame = Mat(Mat::zeros(height, stride, CV_8UC1));
     std::cout << "Object <MarkerDetector> Created" << std::endl;
 }
 

@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BA1EE462166FDEB300924C66 /* Marker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA1EE461166FDEB300924C66 /* Marker.cpp */; };
 		BA41C47D16359968000D6FE7 /* libopencv_core.2.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF1BBE016347E69007C0E0C /* libopencv_core.2.4.2.dylib */; };
 		BA41C48516359C5B000D6FE7 /* libopencv_features2d.2.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BA41C48316359C5B000D6FE7 /* libopencv_features2d.2.4.2.dylib */; };
 		BA41C48616359C5B000D6FE7 /* libopencv_objdetect.2.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BA41C48416359C5B000D6FE7 /* libopencv_objdetect.2.4.2.dylib */; };
+		BA703720167234FB00DC8A06 /* MarkerTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA70371E167234FB00DC8A06 /* MarkerTracker.cpp */; };
+		BA7037231676A01200DC8A06 /* libopencv_video.2.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BA7037221676A01200DC8A06 /* libopencv_video.2.4.2.dylib */; };
 		BADAA76C163465420030E7B9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADAA76B163465420030E7B9 /* main.cpp */; };
 		BADAA76E163465420030E7B9 /* CompTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADAA76D163465420030E7B9 /* CompTest.1 */; };
 		BAE51FF01666796E00A54F21 /* libopencv_calib3d.2.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BAE51FEF1666796E00A54F21 /* libopencv_calib3d.2.4.2.dylib */; };
@@ -32,8 +35,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BA1EE461166FDEB300924C66 /* Marker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Marker.cpp; sourceTree = "<group>"; };
+		BA1EE463166FDEC700924C66 /* Marker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Marker.h; sourceTree = "<group>"; };
 		BA41C48316359C5B000D6FE7 /* libopencv_features2d.2.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_features2d.2.4.2.dylib; path = ../../../../../../usr/local/Cellar/opencv/2.4.2/lib/libopencv_features2d.2.4.2.dylib; sourceTree = "<group>"; };
 		BA41C48416359C5B000D6FE7 /* libopencv_objdetect.2.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_objdetect.2.4.2.dylib; path = ../../../../../../usr/local/Cellar/opencv/2.4.2/lib/libopencv_objdetect.2.4.2.dylib; sourceTree = "<group>"; };
+		BA70371E167234FB00DC8A06 /* MarkerTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkerTracker.cpp; sourceTree = "<group>"; };
+		BA70371F167234FB00DC8A06 /* MarkerTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkerTracker.h; sourceTree = "<group>"; };
+		BA7037221676A01200DC8A06 /* libopencv_video.2.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_video.2.4.2.dylib; path = ../../../../../../usr/local/Cellar/opencv/2.4.2/lib/libopencv_video.2.4.2.dylib; sourceTree = "<group>"; };
 		BADAA767163465420030E7B9 /* CompTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CompTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BADAA76B163465420030E7B9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		BADAA76D163465420030E7B9 /* CompTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = CompTest.1; sourceTree = "<group>"; };
@@ -50,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA7037231676A01200DC8A06 /* libopencv_video.2.4.2.dylib in Frameworks */,
 				BAE51FF01666796E00A54F21 /* libopencv_calib3d.2.4.2.dylib in Frameworks */,
 				BA41C48516359C5B000D6FE7 /* libopencv_features2d.2.4.2.dylib in Frameworks */,
 				BA41C48616359C5B000D6FE7 /* libopencv_objdetect.2.4.2.dylib in Frameworks */,
@@ -65,6 +74,7 @@
 		BADAA75C163465420030E7B9 = {
 			isa = PBXGroup;
 			children = (
+				BA7037221676A01200DC8A06 /* libopencv_video.2.4.2.dylib */,
 				BAE51FEF1666796E00A54F21 /* libopencv_calib3d.2.4.2.dylib */,
 				BA41C48316359C5B000D6FE7 /* libopencv_features2d.2.4.2.dylib */,
 				BA41C48416359C5B000D6FE7 /* libopencv_objdetect.2.4.2.dylib */,
@@ -88,9 +98,13 @@
 			isa = PBXGroup;
 			children = (
 				BADAA76B163465420030E7B9 /* main.cpp */,
+				BA70371E167234FB00DC8A06 /* MarkerTracker.cpp */,
+				BA70371F167234FB00DC8A06 /* MarkerTracker.h */,
 				BADAA76D163465420030E7B9 /* CompTest.1 */,
 				BAE55720163863F700DD4C75 /* MarkerDetector.cpp */,
 				BAE55721163863F700DD4C75 /* MarkerDetector.h */,
+				BA1EE461166FDEB300924C66 /* Marker.cpp */,
+				BA1EE463166FDEC700924C66 /* Marker.h */,
 			);
 			path = CompTest;
 			sourceTree = "<group>";
@@ -148,6 +162,8 @@
 			files = (
 				BADAA76C163465420030E7B9 /* main.cpp in Sources */,
 				BAE55722163863F700DD4C75 /* MarkerDetector.cpp in Sources */,
+				BA1EE462166FDEB300924C66 /* Marker.cpp in Sources */,
+				BA703720167234FB00DC8A06 /* MarkerTracker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

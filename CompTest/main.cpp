@@ -15,7 +15,9 @@
 #include <objdetect.hpp>
 #include <iostream>
 
-#include "MarkerDetector.h"
+//#include "MarkerDetector.h"
+#include "MarkerTracker.h"
+#include "Marker.h"
 
 using namespace cv;
 
@@ -61,9 +63,6 @@ int main(int argc, const char * argv[])
     }
     // Create a window in which the captured images will be presented
     cvNamedWindow( "CameraView", CV_WINDOW_AUTOSIZE );
-    cvNamedWindow( "CameraViewGrayscale", CV_WINDOW_AUTOSIZE );
-    cvNamedWindow( "CameraViewEdgeDetected", CV_WINDOW_AUTOSIZE );
-    cvNamedWindow( "CameraViewSegments", CV_WINDOW_AUTOSIZE );
     cvNamedWindow( "burgonya", CV_WINDOW_AUTOSIZE );
 
     
@@ -94,10 +93,13 @@ int main(int argc, const char * argv[])
     blobDetector.create("SimpleBlob");
      */
     
+    MarkerTracker* markerTracker;
+    
+    //MarkerDetector* markerDetector;
     
     IplImage* frame = cvQueryFrame( capture );
     
-    MarkerDetector* markerDetector;
+    //MarkerDetector* markerDetector;
     
     if ( !frame ) {
         cvReleaseCapture( &capture );
@@ -110,16 +112,27 @@ int main(int argc, const char * argv[])
         /*markerDetector->setLength((frame->width - 1 )*(frame->height - 1));
         markerDetector->setStride(frame->width);
         markerDetector->setHeight(frame->height);*/
-        
-        markerDetector = new MarkerDetector((frame->width - 1 )*(frame->height - 1),frame->width,frame->height);
+        markerTracker = new MarkerTracker(frame);
+        //markerDetector = new MarkerDetector((frame->width - 1 )*(frame->height - 1),frame->width,frame->height);
 
     }
     
     //IplImage* frame_gray = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
-    
+        
     while ( 1 ) {
                 
         IplImage* frame = cvQueryFrame( capture );
+        
+        markerTracker->ProcessFrame(frame);
+        
+        
+        //std::cout << cvGetCaptureProperty(capture, CV_CAP_PROP_FPS) << "FPS" << std::endl;
+    
+        //memcpy(markersOnScene,correctedMarkers,sizeof(correctedMarkers));
+    
+        //
+        
+        //markerTracker->RenderImage(Mat(frame));
         
         //IplImage *frame_gray = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
         //IplImage *frame_binary = cvCreateImage(frameSize,IPL_DEPTH_8U,1);
@@ -132,13 +145,13 @@ int main(int argc, const char * argv[])
         
         //Mat currentMat = new Mat(frame_gray);
         
-        markerDetector->setCurrentFrame(Mat(frame));
+       // markerDetector->setCurrentFrame(Mat(frame));
         
        // cvShowImage( "CameraViewGrayscale", frame_gray );
         
-        markerDetector->preprocessImage();
+       // markerDetector->preprocessImage();
         
-        markerDetector->findPossibleMarkers();
+       // markerDetector->findPossibleMarkers();
         
         /*
         findContours( src, contours, hierarchy,CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
@@ -176,13 +189,20 @@ int main(int argc, const char * argv[])
         
         //cvShowImage( "CameraView", frame );
         //cvShowImage( "CameraViewEdgeDetected",  );
-        imshow( "CameraView", markerDetector->CurrentFrame() );
-        imshow( "CameraViewEdgeDetected", markerDetector->PreprocessedFrame() );
-        imshow( "CameraViewSegments", markerDetector->SegmentsFrame() );
-        if(markerDetector->currentMarker.rows > 0 && markerDetector->currentMarker.cols > 0)
+        
+        markerTracker->RenderImage();
+        
+        imshow( "CameraView", markerTracker->OutImage() );
+    //    imshow( "burgonya", markerTracker->FlowImage() );
+
+        
+        
+       // imshow( "CameraViewEdgeDetected", markerDetector->PreprocessedFrame() );
+       // imshow( "CameraViewSegments", markerDetector->SegmentsFrame() );
+        /*if(markerDetector->currentMarker.rows > 0 && markerDetector->currentMarker.cols > 0)
         {
             imshow( "burgonya",markerDetector->currentMarker );
-        }
+        }*/
         
         //cvReleaseImage(&frame_gray);
 
