@@ -14,7 +14,13 @@ MarkerTracker::MarkerTracker(IplImage *firstFrame)
     currentFrame = Mat(Mat::zeros(firstFrame->height, firstFrame->width, CV_8UC1));
     outImage = Mat(firstFrame);
     cvtColor(outImage,currentFrame,CV_RGB2GRAY);
-    markerDetector = new MarkerDetector((firstFrame->width - 1 )*(firstFrame->height - 1),firstFrame->width,firstFrame->height);
+    
+    // SNN
+    markerDetector = new MarkerDetector((firstFrame->width - 2 )*(firstFrame->height - 2),firstFrame->width,firstFrame->height);
+    
+    // Kuwahara-Nagao (3*stride-1 + 3*height-1)
+    //markerDetector = new MarkerDetector((3*firstFrame->width-1) * (firstFrame->height-1),firstFrame->width,firstFrame->height);
+    
     markerDetector->setCurrentFrame(currentFrame);
     markerDetector->preprocessImage();
     vector<Marker> foundedMarkers = markerDetector->findPossibleMarkers();
@@ -35,16 +41,19 @@ void MarkerTracker::ProcessFrame(IplImage *newFrame)
     outImage.release();
     previousFrame = Mat(currentFrame);
     
-    currentFrame.release();
+    // currentFrame.release();
     
     outImage = Mat(newFrame);
-    cvtColor(outImage,currentFrame,CV_RGB2GRAY);
+    //cvtColor(outImage,currentFrame,CV_RGB2GRAY);
     
     //calcOpticalFlowFarneback(previousFrame,currentFrame,flowImage,0.5,3,5,5,3,1.1,0);
     
     //drawOptFlowMap(flowImage, outImage, 20, CV_RGB(0,255,0));
     
     markerDetector->setCurrentFrame(currentFrame);
+    
+    currentFrame.release();
+    
     markerDetector->preprocessImage();
     vector<Marker> foundedMarkers = markerDetector->findPossibleMarkers();
     vector<Marker> correctedMarkers;
@@ -80,6 +89,7 @@ void MarkerTracker::ProcessFrame(IplImage *newFrame)
         }
     }
     
+    //JAVÍTANI
     
     if( recognizedMarkers.size() > 0 )
     {
@@ -87,29 +97,30 @@ void MarkerTracker::ProcessFrame(IplImage *newFrame)
         if(lastMarkerCornerPoints.size() > 0 )
         {
             calcOpticalFlowPyrLK(previousFrame,currentFrame,lastMarkerCornerPoints,trackedPoints,trackSuccess,trackError);
-        }
         
-        int age;
-        for(int i = 0; i< recognizedMarkers.size(); i++)
-        {
-            age = recognizedMarkers.at(i).Age();
-            if(age < 30) {
-                if(lastMarkerCornerPoints.size() > 0 )
-                {
+            int age;
+            for(int i = 0; i< recognizedMarkers.size(); i++)
+            {
+                age = recognizedMarkers.at(i).Age();
+                if(age < 30) {
                     recognizedMarkers.at(i).setCornerPointAt(0,trackedPoints.at(i*4));
                     recognizedMarkers.at(i).setCornerPointAt(1,trackedPoints.at(i*4+1));
                     recognizedMarkers.at(i).setCornerPointAt(2,trackedPoints.at(i*4+2));
                     recognizedMarkers.at(i).setCornerPointAt(3,trackedPoints.at(i*4+3));
-                    std::cout << "Hiba optical flow-al küszöbölve" << std::endl;
+                    std::cout << "Hiba optical flow-al korigálva" << std::endl;
+                
+                    recognizedMarkers.at(i).setAge(age + 1);
+                    correctedMarkers.push_back(recognizedMarkers.at(i));
+                    DrawMarkerLines(correctedMarkers.back());
                 }
-                recognizedMarkers.at(i).setAge(age + 1);
-                correctedMarkers.push_back(recognizedMarkers.at(i));
-                DrawMarkerLines(correctedMarkers.back());
-            }
+        }
+                
         }
     }
     
     recognizedMarkers = vector<Marker>(correctedMarkers);
+    
+    
     /*
     }
     else
@@ -134,7 +145,7 @@ void MarkerTracker::ProcessFrame(IplImage *newFrame)
         lastMarkerCornerPoints = trackedPoints;
     }
     
-    std::cout << recognizedMarkers.size() << std::endl;
+    std::cout << "Azonosított markerek száma: " << recognizedMarkers.size() << std::endl;
 
 }
 
@@ -146,7 +157,7 @@ void MarkerTracker::RenderImage()
 
 Mat MarkerTracker::OutImage() const
 {
-    return outImage;
+    return markerDetector->PreprocessedFrameColor();
 }
 
 

@@ -63,7 +63,7 @@ int main(int argc, const char * argv[])
     }
     // Create a window in which the captured images will be presented
     cvNamedWindow( "CameraView", CV_WINDOW_AUTOSIZE );
-    cvNamedWindow( "burgonya", CV_WINDOW_AUTOSIZE );
+    //cvNamedWindow( "burgonya", CV_WINDOW_AUTOSIZE );
 
     
     

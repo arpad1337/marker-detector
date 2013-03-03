@@ -18,6 +18,7 @@ MarkerDetector::MarkerDetector(int len, int str, int hei)
     length = len;
     stride = str;
     height = hei;
+    rstride = str*3;
     MarkerDetector::init();
 }
 
@@ -25,8 +26,11 @@ void MarkerDetector::preprocessImage()
 {
     preprocessedFrame.release();
     preprocessedFrame = Mat(Mat::zeros(height, stride, CV_8UC1));
+    //preprocessedFrameColor.release();
+    //preprocessedFrameColor = Mat(Mat::zeros(height, stride, CV_8UC3));
     //cvtColor(currentFrame,currentFrameGray,CV_RGB2GRAY);
-    differenceEdgeDetectionWithThresh(currentFrame);
+    //differenceEdgeDetectionWithThresh(currentFrame);
+    kuwaharaNagaoFilter(currentFrame);
 }
 
 void MarkerDetector::differenceEdgeDetectionWithThresh(Mat from)
@@ -34,7 +38,7 @@ void MarkerDetector::differenceEdgeDetectionWithThresh(Mat from)
     z = 0;
     ptr = (uchar*)(from.data);
     ptr_2 = (uchar*)(preprocessedFrame.data);
-    i = stride + 1;
+    i = rstride + 1;
     for(; i < length; i++)
     {
         _max = 0;
@@ -52,6 +56,59 @@ void MarkerDetector::differenceEdgeDetectionWithThresh(Mat from)
         }
         ptr_2[i] = (variances[_max] > tresh)?255:0;
     }
+}
+
+void MarkerDetector::kuwaharaNagaoFilter(Mat from)
+{
+    z = 0;
+    ptr = (uchar*)(from.data);
+    ptr_2 = (uchar*)(preprocessedFrame.data);
+    i = rstride + 1;
+    j = 0;
+    
+    std::cout<<ptr[0]<<", azután:";
+    
+    ptr+=i;
+    std::cout<<ptr[0]<<" ez";
+    
+    
+    for(; i < length; i++)
+    {
+        for(j=0;j<3;j++) // by color channels
+        {
+            means[0][j] = (ptr[j-1 -rstride] + ptr[j -rstride] + ptr[j-1] + ptr[j])/4;
+            means[1][j] = (ptr[j-rstride] + ptr[j+1 -rstride] + ptr[j] + ptr[j+1])/4;
+            means[2][j] = (ptr[j-1] + ptr[j] + ptr[(i + j)-1 + rstride] + ptr[j + rstride])/4;
+            means[3][j] = (ptr[j] + ptr[j+1] + ptr[j+rstride] + ptr[j+1+rstride])/4;
+        }
+        _min = 10000;
+        for(j=0;j<4;j++)
+        {
+            _dist = getEucledianDistanceByColors(ptr[i], ptr[i+1], ptr[i+2], means[j][0], means[j][1], means[j][2]);
+            if(_dist < _min)
+            {
+                _min = _dist;
+                minColors[0] = ptr[i*3];
+                minColors[1] = ptr[i*3+1];
+                minColors[2] = ptr[i*3+2];
+            }
+        }
+        
+        ptr_2[i] = (minColors[0] + minColors[1] + minColors[2])/3;
+        ptr+=3;
+        //}
+        //ptr
+        
+            //_dist = (r1-r2)*(r1-r2)+(g1-g2)*(g1-g2)+(b1-b2)*(b1-b2);
+        
+    }
+    //cvtColor(preprocessedFrameColor,preprocessedFrame,CV_RGB2GRAY);
+
+}
+
+double MarkerDetector::getEucledianDistanceByColors(int r1, int g1, int b1, int r2, int g2, int b2)
+{
+    return (r1-r2)*(r1-r2)+(g1-g2)*(g1-g2)+(b1-b2)*(b1-b2);
 }
 
 vector<Marker> MarkerDetector::findPossibleMarkers()
@@ -308,6 +365,10 @@ Mat MarkerDetector::PreprocessedFrame() const
 {
     return preprocessedFrame;
 }
+Mat MarkerDetector::PreprocessedFrameColor() const
+{
+    return preprocessedFrameColor;
+}
 Mat MarkerDetector::SegmentsFrame() const
 {
     return segmentsFrame;
@@ -325,6 +386,7 @@ void MarkerDetector::init()
 {
     Mat warpMatrix = Mat(3,3,CV_32FC1);
     preprocessedFrame = Mat(Mat::zeros(height, stride, CV_8UC1));
+    preprocessedFrameColor = Mat(Mat::zeros(height, stride, CV_8UC3));
     std::cout << "Object <MarkerDetector> Created" << std::endl;
 }
 
@@ -345,6 +407,7 @@ void MarkerDetector::setLength(const int value)
 
 void MarkerDetector::setStride(const int value)
 {
+    rstride = value*3;
     stride = value;
 }
 
