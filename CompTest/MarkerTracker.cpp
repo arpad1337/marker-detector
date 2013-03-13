@@ -46,7 +46,7 @@ void MarkerTracker::ProcessFrame(IplImage *newFrame)
     
     // currentFrame.release();
     
-    //outImage = Mat(newFrame);
+    outImage = Mat(newFrame);
     //cvtColor(outImage,currentFrame,CV_RGB2GRAY);
     
     currentFrame = Mat(newFrame);
@@ -105,7 +105,7 @@ void MarkerTracker::ProcessFrame(IplImage *newFrame)
             calcOpticalFlowPyrLK(previousFrame,currentFrame,lastMarkerCornerPoints,trackedPoints,trackSuccess,trackError);
         
             int age;
-            for(int i = 0; i< recognizedMarkers.size(); i++)
+            for(int i = 0; i< recognizedMarkers.size() && i < trackedPoints.size() / 4; i++)
             {
                 age = recognizedMarkers.at(i).Age();
                 if(age < 30) {
@@ -118,13 +118,12 @@ void MarkerTracker::ProcessFrame(IplImage *newFrame)
                     recognizedMarkers.at(i).setAge(age + 1);
                     correctedMarkers.push_back(recognizedMarkers.at(i));
                     DrawMarkerLines(correctedMarkers.back());
+                    recognizedMarkers.erase(recognizedMarkers.begin() + i);
                 }
-        }
+            }
                 
         }
     }
-    
-    recognizedMarkers = vector<Marker>(correctedMarkers);
     
     
     /*
@@ -144,12 +143,16 @@ void MarkerTracker::ProcessFrame(IplImage *newFrame)
     
     if(foundedMarkers.size() > 0)
     {
+        //if(recognizedMarkers.size() >
         lastMarkerCornerPoints = recognizedMarkerCornerPoints;
     }
     else
     {
         lastMarkerCornerPoints = trackedPoints;
     }
+    
+    
+    recognizedMarkers = vector<Marker>(correctedMarkers);
     
     std::cout << "Azonosított markerek száma: " << recognizedMarkers.size() << std::endl;
 
@@ -163,7 +166,7 @@ void MarkerTracker::RenderImage()
 
 Mat MarkerTracker::OutImage() const
 {
-    return markerDetector->PreprocessedFrameColor();
+    return outImage; //markerDetector->CurrentFrame();
 }
 
 

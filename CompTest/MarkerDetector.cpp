@@ -30,14 +30,13 @@ void MarkerDetector::preprocessImage()
     preprocessedFrameColor = Mat(Mat::zeros(height, stride, CV_8UC3));
     //differenceEdgeDetectionWithThresh();
     //kuwaharaNagaoFilter();
-    //differenceEdgeDetectionWithThresh();
+    differenceEdgeDetectionWithThresh();
     //cv::Canny(currentFrame,preprocessedFrame,thresh*8,thresh * 20, 3);
-    houghBasedEdgeDetection();
+    //houghBasedEdgeDetection();
 }
 
 void MarkerDetector::houghBasedEdgeDetection()
 {
-    Mat temp = Mat(Mat::zeros(height, stride, CV_8UC1));
     cv::Canny(currentFrame,preprocessedFrame,thresh*8,thresh * 20, 3);
     //vector<Vec2f> lines;
     /*cv::HoughLines(preprocessedFrame, lines, 1, CV_PI/180, 100, 0, 0 );
@@ -54,14 +53,17 @@ void MarkerDetector::houghBasedEdgeDetection()
         pt2.y = cvRound(y0 - 1000*(a));
         line( preprocessedFrameColor, pt1, pt2, Scalar(0,0,255), 3, CV_AA);
     }*/
-    
     vector<Vec4i> lines;
-    HoughLinesP(preprocessedFrame, lines, 1, CV_PI/180, 80, 50, 25 );
+    HoughLinesP(preprocessedFrame, lines, 1, CV_PI/180, 20, 20, 10 );
     for( size_t i = 0; i < lines.size(); i++ )
     {
-        line( preprocessedFrameColor, Point(lines[i][0], lines[i][1]), Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 3, CV_AA);
+        line( preprocessedFrameColor, Point(lines[i][0], lines[i][1]), Point(lines[i][2], lines[i][3]), Scalar(255,255,255), 1, CV_8U);
     }
+    //cvtColor(preprocessedFrameColor, preprocessedFrame, CV_RGB2GRAY);
+    preprocessedFrame = preprocessedFrameColor > 0;
     
+    cvtColor(preprocessedFrame, preprocessedFrame, CV_RGB2GRAY);
+
     //cv::imshow("burgonya",preprocessedFrame);
     //highgui::imshow("burgonya",preprocessedFrame);
 }
