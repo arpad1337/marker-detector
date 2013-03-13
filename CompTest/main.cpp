@@ -192,7 +192,10 @@ int main(int argc, const char * argv[])
         
         markerTracker->RenderImage();
         
-        imshow( "CameraView", markerTracker->OutImage() );
+        //cvShowImage( "CameraView", new IplImage(markerTracker->OutImage()) );
+        
+        imshow("CameraView",markerTracker->OutImage());
+        
     //    imshow( "burgonya", markerTracker->FlowImage() );
 
         

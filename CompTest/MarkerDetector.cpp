@@ -26,17 +26,52 @@ void MarkerDetector::preprocessImage()
 {
     preprocessedFrame.release();
     preprocessedFrame = Mat(Mat::zeros(height, stride, CV_8UC1));
-    //preprocessedFrameColor.release();
-    //preprocessedFrameColor = Mat(Mat::zeros(height, stride, CV_8UC3));
-    //cvtColor(currentFrame,currentFrameGray,CV_RGB2GRAY);
-    //differenceEdgeDetectionWithThresh(currentFrame);
-    kuwaharaNagaoFilter(currentFrame);
+    preprocessedFrameColor.release();
+    preprocessedFrameColor = Mat(Mat::zeros(height, stride, CV_8UC3));
+    //differenceEdgeDetectionWithThresh();
+    //kuwaharaNagaoFilter();
+    //differenceEdgeDetectionWithThresh();
+    //cv::Canny(currentFrame,preprocessedFrame,thresh*8,thresh * 20, 3);
+    houghBasedEdgeDetection();
 }
 
-void MarkerDetector::differenceEdgeDetectionWithThresh(Mat from)
+void MarkerDetector::houghBasedEdgeDetection()
 {
+    Mat temp = Mat(Mat::zeros(height, stride, CV_8UC1));
+    cv::Canny(currentFrame,preprocessedFrame,thresh*8,thresh * 20, 3);
+    //vector<Vec2f> lines;
+    /*cv::HoughLines(preprocessedFrame, lines, 1, CV_PI/180, 100, 0, 0 );
+    
+    for( size_t i = 0; i < lines.size(); i++ )
+    {
+        float rho = lines[i][0], theta = lines[i][1];
+        Point pt1, pt2;
+        double a = cos(theta), b = sin(theta);
+        double x0 = a*rho, y0 = b*rho;
+        pt1.x = cvRound(x0 + 1000*(-b));
+        pt1.y = cvRound(y0 + 1000*(a));
+        pt2.x = cvRound(x0 - 1000*(-b));
+        pt2.y = cvRound(y0 - 1000*(a));
+        line( preprocessedFrameColor, pt1, pt2, Scalar(0,0,255), 3, CV_AA);
+    }*/
+    
+    vector<Vec4i> lines;
+    HoughLinesP(preprocessedFrame, lines, 1, CV_PI/180, 80, 50, 25 );
+    for( size_t i = 0; i < lines.size(); i++ )
+    {
+        line( preprocessedFrameColor, Point(lines[i][0], lines[i][1]), Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 3, CV_AA);
+    }
+    
+    //cv::imshow("burgonya",preprocessedFrame);
+    //highgui::imshow("burgonya",preprocessedFrame);
+}
+
+void MarkerDetector::differenceEdgeDetectionWithThresh()
+{
+    //preprocessedFrame.release();
+    //preprocessedFrame = Mat(Mat::zeros(height, stride, CV_8UC1));
     z = 0;
-    ptr = (uchar*)(from.data);
+    ptr = (uchar*)(currentFrameGray.data);
     ptr_2 = (uchar*)(preprocessedFrame.data);
     i = rstride + 1;
     for(; i < length; i++)
@@ -54,54 +89,116 @@ void MarkerDetector::differenceEdgeDetectionWithThresh(Mat from)
                 _max = z;
             }
         }
-        ptr_2[i] = (variances[_max] > tresh)?255:0;
+        ptr_2[i] = (variances[_max] > thresh)?255:0;
     }
 }
 
-void MarkerDetector::kuwaharaNagaoFilter(Mat from)
+void MarkerDetector::kuwaharaNagaoFilter()
 {
-    z = 0;
-    ptr = (uchar*)(from.data);
+    //int sum = 0;
+
+    //Mat x = Mat(Mat::zeros(height, stride, CV_8UC1));
+    //ptr = (uchar*)(from.data);
     ptr_2 = (uchar*)(preprocessedFrame.data);
-    i = rstride + 1;
-    j = 0;
     
-    std::cout<<ptr[0]<<", azután:";
+    //std::cout<<ptr[0]<<", azután:";
     
-    ptr+=i;
-    std::cout<<ptr[0]<<" ez";
+    //ptr+=i;
+    //std::cout<<ptr[0]<<" ez";
     
-    
-    for(; i < length; i++)
-    {
-        for(j=0;j<3;j++) // by color channels
+    // 1 ciklussal nem lehet..........
+    //for(i = rstride + 1; i < length; ++i)
+    //{
+    for(i=1;i<height-2;++i){for(j=1;j<stride-2;++j){
+        for(z=0;z<3;z++) // by color channels
         {
-            means[0][j] = (ptr[j-1 -rstride] + ptr[j -rstride] + ptr[j-1] + ptr[j])/4;
-            means[1][j] = (ptr[j-rstride] + ptr[j+1 -rstride] + ptr[j] + ptr[j+1])/4;
-            means[2][j] = (ptr[j-1] + ptr[j] + ptr[(i + j)-1 + rstride] + ptr[j + rstride])/4;
-            means[3][j] = (ptr[j] + ptr[j+1] + ptr[j+rstride] + ptr[j+1+rstride])/4;
+            /*means[0][j] = ptr[i*3+j-3 -rstride];
+            means[0][j] += ptr[i*3+j -rstride];
+            means[0][j] += ptr[i*3+j-3];
+            means[0][j] += ptr[i*3+j];
+            means[0][j] = means[0][j] / 4;
+            
+            means[1][j] = ptr[i*3+j-rstride];
+            means[1][j] += ptr[i*3+j+3 -rstride];
+            means[1][j] += ptr[i*3+j];
+            means[1][j] += ptr[i*3+j+3];
+            means[1][j] = means[1][j] / 4;
+            
+            means[2][j] = ptr[i*3+j-3];
+            means[2][j] += ptr[i*3+j];
+            means[2][j] += ptr[i*3+j-3 + rstride];
+            means[2][j] += ptr[i*3+j + rstride];
+            means[2][j] = means[2][j] / 4;
+            
+            means[3][j] = ptr[i*3+j];
+            means[3][j] += ptr[i*3+j+3];
+            means[3][j] += ptr[i*3+j+rstride];
+            means[3][j] += ptr[i*3+j+3+rstride];
+            means[3][j] = means[3][j] / 4;*/
+            
+        
+            //std::cout << from.at<Vec3b>(i,j)[0] << " R " << from.at<Vec3b>(i,j)[0] << " G  " << from.at<Vec3b>(i,j)[0] << " B where I: " << i << "and J: " << j;
+            
+            means[0][z] = kuwaharaLut_2[currentFrame.at<Vec3b>(i-1,j-1)[z]
+                                        + currentFrame.at<Vec3b>(i,j-1)[z]
+                                        + currentFrame.at<Vec3b>(i-1,j)[z]
+                                        + currentFrame.at<Vec3b>(i,j)[z]];
+            means[1][z] = kuwaharaLut_2[currentFrame.at<Vec3b>(i-1,j)[z]
+                                        + currentFrame.at<Vec3b>(i,j)[z]
+                                        + currentFrame.at<Vec3b>(i-1,j+1)[z]
+                                        + currentFrame.at<Vec3b>(i,j+1)[z]];
+            means[2][z] = kuwaharaLut_2[currentFrame.at<Vec3b>(i,j-1)[z]
+                                        + currentFrame.at<Vec3b>(i+1,j-1)[z]
+                                        + currentFrame.at<Vec3b>(i,j)[z]
+                                        + currentFrame.at<Vec3b>(i,j+1)[z]];
+            means[3][z] = kuwaharaLut_2[currentFrame.at<Vec3b>(i,j)[z]
+                                        + currentFrame.at<Vec3b>(i,j+1)[z]
+                                        + currentFrame.at<Vec3b>(i,j+1)[z]
+                                        + currentFrame.at<Vec3b>(i+1,j+1)[z]];
         }
+        
         _min = 10000;
-        for(j=0;j<4;j++)
+        k=0;
+        for(z=0;z<4;z++)
         {
-            _dist = getEucledianDistanceByColors(ptr[i], ptr[i+1], ptr[i+2], means[j][0], means[j][1], means[j][2]);
+            _dist = getEucledianDistanceByColors(currentFrame.at<Vec3b>(i,j)[0],
+                                                 currentFrame.at<Vec3b>(i,j)[1],
+                                                 currentFrame.at<Vec3b>(i,j)[2],
+                                                 means[z][0],
+                                                 means[z][1],
+                                                 means[z][2]);
             if(_dist < _min)
             {
                 _min = _dist;
-                minColors[0] = ptr[i*3];
-                minColors[1] = ptr[i*3+1];
-                minColors[2] = ptr[i*3+2];
+                k = z;
             }
         }
         
-        ptr_2[i] = (minColors[0] + minColors[1] + minColors[2])/3;
-        ptr+=3;
+        //ptr_2[i*stride+j] = (uchar)kuwaharaLut_1[minColors[0] + minColors[1] + minColors[2]];
+        
+        //sum += kuwaharaLut_1[means[k][0]+means[k][1]+means[k][2]];
+        
+        /*if(kuwaharaLut_1[means[k][0]+means[k][1]+means[k][2]] > 130)
+        {
+            std::cout << kuwaharaLut_1[means[k][0]+means[k][1]+means[k][2]] << "  , index: " << means[k][0]+means[k][1]+means[k][2] << std::endl;;
+        }*/
+        
+        
+        
+        //ptr_2[i*stride+j] = kuwaharaLut_1[means[k][0]+means[k][1]+means[k][2]];
+        
+        ptr_2[i*stride+j] = (_dist > thresh)?255:0;
+        
+        
+        //ptr+=3;
         //}
         //ptr
         
             //_dist = (r1-r2)*(r1-r2)+(g1-g2)*(g1-g2)+(b1-b2)*(b1-b2);
-        
-    }
+    
+    }}
+    
+    //std::cout << "Sum: " << sum << " ";
     //cvtColor(preprocessedFrameColor,preprocessedFrame,CV_RGB2GRAY);
 
 }
@@ -189,7 +286,7 @@ vector<Marker> MarkerDetector::findPossibleMarkers()
                     Mat currentMarker = Mat();
                     Mat temp = Mat();
                 
-                    warpPerspective(currentFrame, temp, warpMatrix, Size(300,300),INTER_NEAREST);
+                    warpPerspective(currentFrameGray, temp, warpMatrix, Size(300,300),INTER_NEAREST);
                     
                     threshold(temp, currentMarker, 0, 255, THRESH_OTSU);
                     
@@ -341,7 +438,7 @@ long MarkerDetector::hashBinaryMatrix(bool binaryCode[6][6])
     
     hash ^= std::strtol(r270.c_str(), & ptr, 2) / 64 - 1;
     
-    return hash;
+    return hash % 1337;
 }
 
 
@@ -378,6 +475,9 @@ void MarkerDetector::setCurrentFrame(Mat value)
 {
     currentFrame.release();
     currentFrame = value;
+    currentFrameGray.release();
+    currentFrameGray = Mat();
+    cvtColor(currentFrame, currentFrameGray, CV_RGB2GRAY);
 }
 
 //void MarkerDetector::set
@@ -385,8 +485,26 @@ void MarkerDetector::setCurrentFrame(Mat value)
 void MarkerDetector::init()
 {
     Mat warpMatrix = Mat(3,3,CV_32FC1);
+    currentFrameGray = Mat(Mat::zeros(height, stride, CV_8UC1));
     preprocessedFrame = Mat(Mat::zeros(height, stride, CV_8UC1));
     preprocessedFrameColor = Mat(Mat::zeros(height, stride, CV_8UC3));
+    int j = 0;
+    for(int i = 0; i< 768 ; i+=3)
+    {
+        kuwaharaLut_1[i] = j;
+        kuwaharaLut_1[i+1] = j;
+        kuwaharaLut_1[i+2] = j;
+        j++;
+    }
+    j = 0;
+    for(int i = 0; i< 1024 ; i+=4)
+    {
+        kuwaharaLut_2[i] = j;
+        kuwaharaLut_2[i+1] = j;
+        kuwaharaLut_2[i+2] = j;
+        kuwaharaLut_2[i+3] = j;
+        j++;
+    }
     std::cout << "Object <MarkerDetector> Created" << std::endl;
 }
 

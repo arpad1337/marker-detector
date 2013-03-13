@@ -10,6 +10,7 @@
 #define __CompTest__MarkerDetector__
 
 #include "cv.h"
+#include "highgui.h"
 #include <iostream>
 #include "Marker.h"
 
@@ -46,14 +47,15 @@ private:
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
     int variances[4];
-    double means[4][3];
-    int minColors[3];
-    int _max,_min,_dist,length,stride,labres,tresh = 10,rstride;
-    int i,j,z = 0;
+    int means[4][3];
+    int _max,_min,_dist,length,stride,labres,thresh = 10,rstride;
+    int i,j,z,k;
     uchar* ptr,* ptr_2;
-    void differenceEdgeDetectionWithThresh(Mat grayFrame);
+    void differenceEdgeDetectionWithThresh();
+    void kuwaharaNagaoFilter();
+    void houghBasedEdgeDetection();
     double getEucledianDistanceByColors(int r1, int g1, int b1, int r2, int g2, int b2);
-    void kuwaharaNagaoFilter(Mat colorFrame);
+    int kuwaharaLut_1[768], kuwaharaLut_2[1024];
     double extractDataFromBinaryMarker(Mat possibleMarker, bool binaryCode[6][6]);
     long hashBinaryMatrix(bool binaryCode[6][6]);
     bool validateBinaryMatrix(bool binaryCode[6][6]);

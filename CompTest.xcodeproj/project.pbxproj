@@ -46,7 +46,7 @@
 		BADAA76B163465420030E7B9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		BADAA76D163465420030E7B9 /* CompTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = CompTest.1; sourceTree = "<group>"; };
 		BAE51FEF1666796E00A54F21 /* libopencv_calib3d.2.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_calib3d.2.4.2.dylib; path = ../../../../../../usr/local/Cellar/opencv/2.4.2/lib/libopencv_calib3d.2.4.2.dylib; sourceTree = "<group>"; };
-		BAE55720163863F700DD4C75 /* MarkerDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkerDetector.cpp; sourceTree = "<group>"; };
+		BAE55720163863F700DD4C75 /* MarkerDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkerDetector.cpp; sourceTree = "<group>"; usesTabs = 0; };
 		BAE55721163863F700DD4C75 /* MarkerDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkerDetector.h; sourceTree = "<group>"; };
 		BAF1BBE016347E69007C0E0C /* libopencv_core.2.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.2.dylib; path = ../../../../../../usr/local/Cellar/opencv/2.4.2/lib/libopencv_core.2.4.2.dylib; sourceTree = "<group>"; };
 		BAF1BBE116347E69007C0E0C /* libopencv_highgui.2.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.2.4.2.dylib; path = ../../../../../../usr/local/Cellar/opencv/2.4.2/lib/libopencv_highgui.2.4.2.dylib; sourceTree = "<group>"; };

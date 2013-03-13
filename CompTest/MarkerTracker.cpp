@@ -10,19 +10,22 @@
 
 MarkerTracker::MarkerTracker(IplImage *firstFrame)
 {
-    previousFrame = Mat(Mat::zeros(firstFrame->height, firstFrame->width, CV_8UC1));
-    currentFrame = Mat(Mat::zeros(firstFrame->height, firstFrame->width, CV_8UC1));
+    previousFrame = Mat(Mat::zeros(firstFrame->height, firstFrame->width, CV_8UC3));
+    currentFrame = Mat(Mat::zeros(firstFrame->height, firstFrame->width, CV_8UC3));
     outImage = Mat(firstFrame);
-    cvtColor(outImage,currentFrame,CV_RGB2GRAY);
+    currentFrame = outImage;
+    //cvtColor(outImage,currentFrame,CV_RGB2GRAY);
     
     // SNN
-    markerDetector = new MarkerDetector((firstFrame->width - 2 )*(firstFrame->height - 2),firstFrame->width,firstFrame->height);
+    markerDetector = new MarkerDetector((firstFrame->width - 1 )*(firstFrame->height - 1),firstFrame->width,firstFrame->height);
     
     // Kuwahara-Nagao (3*stride-1 + 3*height-1)
     //markerDetector = new MarkerDetector((3*firstFrame->width-1) * (firstFrame->height-1),firstFrame->width,firstFrame->height);
     
     markerDetector->setCurrentFrame(currentFrame);
     markerDetector->preprocessImage();
+   
+    
     vector<Marker> foundedMarkers = markerDetector->findPossibleMarkers();
     for(int i = 0; i < foundedMarkers.size(); i++)
     {
@@ -43,18 +46,21 @@ void MarkerTracker::ProcessFrame(IplImage *newFrame)
     
     // currentFrame.release();
     
-    outImage = Mat(newFrame);
+    //outImage = Mat(newFrame);
     //cvtColor(outImage,currentFrame,CV_RGB2GRAY);
+    
+    currentFrame = Mat(newFrame);
     
     //calcOpticalFlowFarneback(previousFrame,currentFrame,flowImage,0.5,3,5,5,3,1.1,0);
     
     //drawOptFlowMap(flowImage, outImage, 20, CV_RGB(0,255,0));
     
     markerDetector->setCurrentFrame(currentFrame);
-    
-    currentFrame.release();
-    
+        
     markerDetector->preprocessImage();
+    
+    //currentFrame.release();
+    
     vector<Marker> foundedMarkers = markerDetector->findPossibleMarkers();
     vector<Marker> correctedMarkers;
     
