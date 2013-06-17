@@ -33,10 +33,9 @@ private:
     Mat translationMatrix;
     long hash;
     bool binaryCode[6][6];
-    Mat calculatePosition();
+    bool calculatePosition();
     int age;
     int currentOrientation;
-    int focalLength = 640;
 };
 
 

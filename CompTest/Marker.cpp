@@ -25,6 +25,12 @@ Mat Marker::TranslationMatrix() const
     return translationMatrix;
 }
 
+bool Marker::calculatePosition()
+{
+    //return RPP::Rpp(m_model_world_pts, image_pts, &m_model_rotation_mat, &m_model_translation_mat, &it, &obj_err, &img_err);
+    return false;
+}
+
 void Marker::setRotationMatrix(Mat const newRotationMatrix)
 {
     rotationMatrix = newRotationMatrix;

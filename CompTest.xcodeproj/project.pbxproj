@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BA109EE816F1C4E800FC5BAC /* 3DEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA109EE616F1C4E800FC5BAC /* 3DEngine.cpp */; };
 		BA1EE462166FDEB300924C66 /* Marker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA1EE461166FDEB300924C66 /* Marker.cpp */; };
 		BA41C47D16359968000D6FE7 /* libopencv_core.2.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF1BBE016347E69007C0E0C /* libopencv_core.2.4.2.dylib */; };
 		BA41C48516359C5B000D6FE7 /* libopencv_features2d.2.4.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BA41C48316359C5B000D6FE7 /* libopencv_features2d.2.4.2.dylib */; };
@@ -35,6 +36,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BA109EE616F1C4E800FC5BAC /* 3DEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = 3DEngine.cpp; sourceTree = "<group>"; };
+		BA109EE716F1C4E800FC5BAC /* 3DEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 3DEngine.h; sourceTree = "<group>"; };
 		BA1EE461166FDEB300924C66 /* Marker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Marker.cpp; sourceTree = "<group>"; };
 		BA1EE463166FDEC700924C66 /* Marker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Marker.h; sourceTree = "<group>"; };
 		BA41C48316359C5B000D6FE7 /* libopencv_features2d.2.4.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_features2d.2.4.2.dylib; path = ../../../../../../usr/local/Cellar/opencv/2.4.2/lib/libopencv_features2d.2.4.2.dylib; sourceTree = "<group>"; };
@@ -105,6 +108,8 @@
 				BAE55721163863F700DD4C75 /* MarkerDetector.h */,
 				BA1EE461166FDEB300924C66 /* Marker.cpp */,
 				BA1EE463166FDEC700924C66 /* Marker.h */,
+				BA109EE616F1C4E800FC5BAC /* 3DEngine.cpp */,
+				BA109EE716F1C4E800FC5BAC /* 3DEngine.h */,
 			);
 			path = CompTest;
 			sourceTree = "<group>";
@@ -164,6 +169,7 @@
 				BAE55722163863F700DD4C75 /* MarkerDetector.cpp in Sources */,
 				BA1EE462166FDEB300924C66 /* Marker.cpp in Sources */,
 				BA703720167234FB00DC8A06 /* MarkerTracker.cpp in Sources */,
+				BA109EE816F1C4E800FC5BAC /* 3DEngine.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,7 +187,7 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -213,7 +219,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
